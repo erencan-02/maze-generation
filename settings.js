@@ -93,10 +93,11 @@ function KeyPress(e) {
 		return;
 	}
 
-	e.preventDefault();
 
   if(NUMS.includes(evtobj.keyCode)){
     setSelectedAlgorithm(evtobj.keyCode - 49);
+  }else {
+    e.preventDefault();
   }
 
 	if ((evtobj.keyCode == 82 && evtobj.ctrlKey) || evtobj.keyCode == 116)  location.reload();
