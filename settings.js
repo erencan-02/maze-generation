@@ -4,6 +4,18 @@ const CUSTOM_EVENTS = [82, 88, 83, 27, 32, 39, 72, 38, 40];
 var settingsIsOpen = false;
 var helpIsOpen = false;
 
+//Listeners
+var fr = document.getElementById("input_frame_rate")
+fr.addEventListener('change', (event) => {
+  frame_rate = parseInt(fr.value);
+});
+
+var spf = document.getElementById("input_steps_per_frame")
+spf.addEventListener('change', (event) => {
+  steps_per_frame = parseInt(spf.value);
+});
+
+
 function closeAllPages(){
   document.getElementById("settingsPage").style.visibility = "hidden";
   document.getElementById("helpPage").style.visibility = "hidden";
@@ -35,6 +47,7 @@ function downloadCanvasImage(){
   link.click();
   link.remove();
 }
+
 
 
 function KeyPress(e) {
