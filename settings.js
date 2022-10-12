@@ -15,6 +15,12 @@ spf.addEventListener('change', (event) => {
   steps_per_frame = parseInt(spf.value);
 });
 
+var cellColor = document.getElementById("colorPicker");
+cellColor.addEventListener('change', (event) => {
+  line_color = cellColor.value;
+});
+
+
 
 function closeAllPages(){
   document.getElementById("settingsPage").style.visibility = "hidden";

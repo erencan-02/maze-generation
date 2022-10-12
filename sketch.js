@@ -129,7 +129,7 @@ function setup(){
   canvas.mouseClicked(checkMouseClick);
   canvas.mouseOver(loop);
   canvas.mouseOut(() => {
-    if(maze_gen == undefined){
+    if(maze_gen == undefined && !settingsIsOpen){
       noLoop();
     }
   });
