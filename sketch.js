@@ -36,7 +36,6 @@ const getAlgorithm = function(name){
   return algorithms[name];
 }
 
-
 const initializeGrid = function(grid, rowN, colN){
   while(grid.length > 0){
     grid.pop();
@@ -62,7 +61,6 @@ const initializeGrid = function(grid, rowN, colN){
   //Initialize adjacent Cell attribute in all the walls
   initializeWalls(grid);
 }
-
 
 const initializeWalls = function(grid){
   grid.forEach((row, i) => {
@@ -90,7 +88,6 @@ const initializeWalls = function(grid){
     });
   });
 }
-
 
 const resetCanvas = function(){
   //Recalculate resolution values
@@ -176,7 +173,6 @@ function draw() {
   }
 }
 
-
 function Cell(i, j){
   this.i = i;
   this.j = j;
@@ -227,12 +223,10 @@ function Cell(i, j){
   }
 }
 
-
 function Point(x, y){
   this.x = x;
   this.y = y;
 }
-
 
 function Wall(cell1, cell2, p1, p2){
   this.cell1 = cell1;
@@ -261,7 +255,6 @@ function checkMouseClick(){
     }
 }
 
-
 function process() {
   if(starting_cell == undefined){
     var i = int(mouseY/cell_size);
@@ -270,7 +263,6 @@ function process() {
     run(selected_algorithm, i, j);
   }
 }
-
 
 function run(algo_name, i, j){
   i = i == undefined ? 0 : i;
@@ -285,7 +277,6 @@ function run(algo_name, i, j){
   maze_gen = getAlgorithm(selected_algorithm);
 }
 
-
 function getParameters(){
   var input_frame_frate = parseInt(document.getElementById("input_frame_rate").value);
   var input_steps_per_frame = parseInt(document.getElementById("input_steps_per_frame").value);
@@ -298,24 +289,20 @@ function getParameters(){
   }
 }
 
-
 function setParameters(fr, spf, algo){
   frame_rate = fr <= 0 ? 1 : fr;
   steps_per_frame = spf <= 0 ? 1 : spf;
   selected_algorithm = algo == undefined || !ALGORITHMS.includes(algo.toUpperCase()) ? DEFAULT_ALGORITHM : algo.toUpperCase();
 }
 
-
 function setPause(b){
   is_paused = b;
 }
-
 
 function setStepsPerFrame(spf){
   steps_per_frame = spf > 0 ? spf : 1;
    document.getElementById("input_steps_per_frame").value = steps_per_frame;
 }
-
 
 function setShowMaze(b){
   show_maze = b;
@@ -324,4 +311,9 @@ function setShowMaze(b){
 function setCellSize(n){
   cell_size = 10 <= n <= 100 ? n : calculateIdealCellSize(windowWidth, windowHeight);
   resetCanvas();
+}
+
+function setSelectedAlgorithm(i){
+  selected_algorithm = ALGORITHMS[mod(i, ALGORITHMS.length)];
+  document.getElementById("input_selected_algorithm").value = selected_algorithm;
 }

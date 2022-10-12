@@ -76,7 +76,6 @@ class MazeGenerator{
 }
 
 
-
 class RDFS extends MazeGenerator{
   constructor(grid, start){
     super();
@@ -109,8 +108,6 @@ class RDFS extends MazeGenerator{
     return this.getNeighbourCells(cell, this.grid).filter((c) => !c.visited);
   }
 }
-
-
 
 
 class RKruskal extends MazeGenerator{
@@ -225,9 +222,7 @@ class RPrim extends MazeGenerator{
 }
 
 
-
-
-//https://javascript.info/task/shuffle
+//Source: https://javascript.info/task/shuffle
 const shuffle = (array) => {
   if(array.length <= 1){
     return;
@@ -245,8 +240,6 @@ const shuffle = (array) => {
   }
 }
 
-
-
 const fold = (reducer, init, xs) => {
     let acc = init;
     for (const x of xs) {
@@ -254,37 +247,3 @@ const fold = (reducer, init, xs) => {
     }
     return acc;
 };
-
-
-const allValuesSame = (array) => {
-  if(array.length <= 1){
-    return true;
-  }
-
-  var init = array[0];
-
-  for(const x of array){
-    if(x !== init){
-      return false;
-    }
-  }
-  return true;
-}
-
-
-const removeFromArray = (array, element) => {
-  array = array.filter((x) => x !== element);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-//whitespace

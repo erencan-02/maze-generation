@@ -1,8 +1,10 @@
 
 const CUSTOM_EVENTS = [82, 88, 83, 27, 32, 39, 72, 38, 40];
+const NUMS = [...Array(10).keys()].map((n) => n+48); //[48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 
 var settingsIsOpen = false;
 var helpIsOpen = false;
+
 
 //Listeners
 var fr = document.getElementById("input_frame_rate")
@@ -27,10 +29,8 @@ showMazeVisited.addEventListener('change', (event) => {
 
 var cs = document.getElementById("input_cell_size");
 cs.addEventListener('change', (event) => {
-  //setShowMaze(showMazeVisited.checked);
   setCellSize(parseInt(cs.value));
 });
-
 
 
 function closeAllPages(){
@@ -66,6 +66,8 @@ function downloadCanvasImage(){
 }
 
 function initializeValues(){
+
+  //Set input values to values from sketch
   fr.value = frame_rate;
   spf.value = steps_per_frame;
   cellColor.value = line_color;
@@ -80,11 +82,15 @@ function KeyPress(e) {
 
 	var evtobj = window.event ? event : e
 
-	if(!CUSTOM_EVENTS.includes(evtobj.keyCode)){
+	if(!CUSTOM_EVENTS.includes(evtobj.keyCode) && !NUMS.includes(evtobj.keyCode)){
 		return;
 	}
 
 	e.preventDefault();
+
+  if(NUMS.includes(evtobj.keyCode)){
+    setSelectedAlgorithm(evtobj.keyCode - 49);
+  }
 
 	if ((evtobj.keyCode == 82 && evtobj.ctrlKey) || evtobj.keyCode == 116)  location.reload();
 
