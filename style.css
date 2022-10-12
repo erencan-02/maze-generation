@@ -23,6 +23,35 @@ svg{
   height: 100%;
 }
 
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgb(13, 17, 20);
+}
+
+li {
+  float: left;
+}
+
+li:hover{
+  cursor: pointer;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #111111;
+  cursor: pointer;
+}
+
 #topBar{
   position: absolute;
   top: 0;
@@ -52,12 +81,20 @@ svg{
 }
 
 #settingsToggle{
-   position: absolute;
-   left: 5px;
-   top: 5px;
+   position: relative;
+   left: 0px;
+   top: 0px;
    width: 40px;
    height: 40px;
-   cursor: pointer;
+}
+
+#helpToggle{
+  position: relative;
+  left: 0px;
+  top: 0px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
 
 #settingsPage{

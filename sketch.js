@@ -1,4 +1,6 @@
 
+const ALGORITHMS = ["RDFS", "KRUSKAL", "PRIM"];
+const DEFAULT_ALGORITHM = ALGORITHMS[1];
 
 var CELL_SIZE = 40;
 var windowWidth;
@@ -12,10 +14,10 @@ var maze_gen;
 var starting_cell;
 var steps_per_frame = 50;
 var frame_rate = 10;
-var selected_algorithm = "RDFS";
+var selected_algorithm = DEFAULT_ALGORITHM;
 
 const getAlgorithm = function(name){
-  name = name == undefined ? "RDFS" : name;
+  name = name == undefined ? DEFAULT_ALGORITHM : name;
 
   var algorithms = {
     'RDFS': new RDFS(grid, starting_cell),
@@ -97,8 +99,8 @@ const mod = function(n, m) {
 }
 
 const calculateIdealCellSize = function(w, h){
-  var minSize = 40;
-  var maxSize = 70;
+  var minSize = 30;//40;
+  var maxSize = 70;//70;
   var results = {};
 
   for(var i=minSize; i<maxSize; i++){
@@ -264,10 +266,9 @@ function run(algo_name, i, j){
   var params = getParameters();
 
   //Set the parameters
-  algo_name = algo_name == undefined ? "RDFS" : params["selected_algorithm"].toUpperCase();
-  frame_rate = params["frame_rate"];
-  steps_per_frame = params["steps_per_frame"];
-  maze_gen = getAlgorithm(algo_name);
+  setParameters(params["frame_rate"], params["steps_per_frame"], params["selected_algorithm"]);
+
+  maze_gen = getAlgorithm(selected_algorithm);
 }
 
 function getParameters(){
@@ -280,4 +281,10 @@ function getParameters(){
     "steps_per_frame": input_steps_per_frame,
     "selected_algorithm": input_algorithm
   }
+}
+
+function setParameters(fr, spf, algo){
+  frame_rate = fr <= 0 ? 1 : fr;
+  steps_per_frame = spf <= 0 ? 1 : spf;
+  selected_algorithm = algo == undefined || !ALGORITHMS.includes(algo.toUpperCase()) ? DEFAULT_ALGORITHM : algo.toUpperCase();
 }

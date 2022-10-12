@@ -9,8 +9,26 @@
 
   <body>
     <div id="topBar">
+      <ul>
       <!-- Setting Icon -->
-      <img id="settingsToggle" src="resources/settings_icon.png" onclick="toggleSettings()"></img>
+      <li>
+        <img id="settingsToggle" src="resources/settings_icon.png" onclick="toggleSettings()"></img>
+      </li>
+
+      <li>
+        <img id="helpToggle" src="resources/book_open.png" onclick="toggleHelp()"></img>
+      </li>
+
+      <li>
+        <img id="settingsToggle" src="resources/settings_icon.png" onclick="toggleSettings()"></img>
+      </li>
+
+      <li>
+
+      </li>
+
+
+      </ul>
 
       <a id="gitHubLink" href="https://github.com/erencan-02" target="_blank">
         <!-- SVG from https://saurabhdaware.github.io/text-to-handwriting/ -->
@@ -24,7 +42,6 @@
 
     <div id="settingsPage">
       <!--<h1 style="position:relative; left:30px;">Settings</h1>-->
-
       <div class="container">
         <div class="item">
           <h2 class="itemHeader">Frame Rate</h2>
@@ -44,8 +61,6 @@
             <option value="PRIM">Randomized Prim</option>
           </select>
         </div>
-
-
       </div>
 
     </div>
