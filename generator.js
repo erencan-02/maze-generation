@@ -77,7 +77,7 @@ class MazeGenerator{
 
 
 
-class RDFSI extends MazeGenerator{
+class RDFS extends MazeGenerator{
   constructor(grid, start){
     super();
     this.grid = grid;

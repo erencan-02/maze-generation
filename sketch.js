@@ -10,15 +10,15 @@ var line_color = [0, 240, 60];//[200, 0, 200];
 var grid = [];
 var maze_gen;
 var starting_cell;
-var steps_per_frame = 5;
+var steps_per_frame = 50;
 var frame_rate = 10;
-var selected_algorithm = "RDFSI";
+var selected_algorithm = "RDFS";
 
 const getAlgorithm = function(name){
-  //starting_cell = starting_cell == undefined ? grid[0][0] : starting_cell;
+  name = name == undefined ? "RDFS" : name;
 
   var algorithms = {
-    'RDFSI': new RDFSI(grid, starting_cell),
+    'RDFS': new RDFS(grid, starting_cell),
     'KRUSKAL': new RKruskal(grid),
     'PRIM': new RPrim(grid, starting_cell)
   };
@@ -88,16 +88,9 @@ const reset = function(){
 
   //Reset Grid
   initializeGrid(grid);
-
-  /*
-  grid.forEach((item, i) => {
-    item.forEach((c, j) => {
-      c.eastWall = true;
-      c.southWall = true;
-      c.visited = false;
-    });
-  });*/
 }
+
+var canvas;
 
 const mod = function(n, m) {
   return ((n % m) + m) % m;
@@ -115,17 +108,14 @@ const calculateIdealCellSize = function(w, h){
   return int(Object.keys(results).reduce((key, v) => results[v] > results[key] ? v : key));
 }
 
-function windowResized(){
-  //resizeCanvas(windowWidth, windowHeight);
-  //reset();
-}
-
 function setup(){
   background(bg_color);
 
   CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
 
-  createCanvas(windowWidth, windowHeight);
+  canvas = createCanvas(windowWidth, windowHeight);
+  canvas.mouseClicked(checkMouseClick);
+
   frameRate(frame_rate);
 
   initializeGrid(grid, floor(windowHeight/CELL_SIZE), floor(windowWidth/CELL_SIZE));
@@ -250,7 +240,14 @@ function Wall(cell1, cell2, p1, p2){
   }
 }
 
-function mouseClicked() {
+function checkMouseClick(){
+    if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
+      process();
+      return;
+    }
+}
+
+function process() {
   if(starting_cell == undefined){
     var i = int(mouseY/CELL_SIZE);
     var j = int(mouseX/CELL_SIZE);
@@ -262,8 +259,25 @@ function mouseClicked() {
 function run(algo_name, i, j){
   i = i == undefined ? 0 : i;
   j = j == undefined ? 0 : j;
-  algo_name = algo_name == undefined ? "RDFSI" : algo_name.toUpperCase();
-
   starting_cell = grid[i][j];
+
+  var params = getParameters();
+
+  //Set the parameters
+  algo_name = algo_name == undefined ? "RDFS" : params["selected_algorithm"].toUpperCase();
+  frame_rate = params["frame_rate"];
+  steps_per_frame = params["steps_per_frame"];
   maze_gen = getAlgorithm(algo_name);
+}
+
+function getParameters(){
+  var input_frame_frate = parseInt(document.getElementById("input_frame_rate").value);
+  var input_steps_per_frame = parseInt(document.getElementById("input_steps_per_frame").value);
+  var input_algorithm = document.getElementById("input_algorithm").value;
+
+  return {
+    "frame_rate": input_frame_frate,
+    "steps_per_frame": input_steps_per_frame,
+    "selected_algorithm": input_algorithm
+  }
 }

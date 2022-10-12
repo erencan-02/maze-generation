@@ -1,0 +1,7 @@
+topbar:
+  input:
+    - steps per frame [int]
+    - frame rate [int]
+    - Cell color [rgb]
+    - select algorithm [dropdown]
+    (cell size)
