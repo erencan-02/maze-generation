@@ -306,10 +306,14 @@ function setStepsPerFrame(spf){
 
 function setShowMaze(b){
   show_maze = b;
+  document.getElementById("input_show_maze").checked = show_maze;
 }
 
 function setCellSize(n){
-  cell_size = 10 <= n <= 100 ? n : calculateIdealCellSize(windowWidth, windowHeight);
+  var minSize = 15;
+  var maxSize = 1000;
+  
+  cell_size = minSize <= n <= maxSize ? n : calculateIdealCellSize(windowWidth, windowHeight);
   resetCanvas();
 }
 

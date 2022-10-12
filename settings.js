@@ -56,9 +56,16 @@ function toggleHelp(){
   document.getElementById("helpPage").style.visibility = option;
 }
 
+function generateFileName(){
+  var file_type = "png";
+  var infos = [selected_algorithm, cell_size, line_color, "by_eren"];
+  return infos.join("_") + "." + file_type;
+}
+
 function downloadCanvasImage(){
   var link = document.createElement("a");
-  link.setAttribute('download', 'maze.png');
+  var file_name = generateFileName();
+  link.setAttribute('download', file_name);
   link.setAttribute('href', document.getElementById("defaultCanvas0").toDataURL("image/png"));//.replace("image/png", "image/octet-stream"));
   document.body.appendChild(link);
   link.click();
@@ -98,11 +105,12 @@ function KeyPress(e) {
 
   if (evtobj.keyCode == 27) toggleSettings();
 
-  if (evtobj.keyCode == 83) setShowMaze(!show_maze);
 
   if(evtobj.keyCode == 72) toggleHelp();
 
 	if (evtobj.keyCode == 83 && evtobj.ctrlKey) downloadCanvasImage();
+
+  if (evtobj.keyCode == 83 && !evtobj.ctrlKey) setShowMaze(!show_maze);
 
   if(evtobj.keyCode == 32) setPause(!is_paused);
 
