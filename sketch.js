@@ -2,19 +2,26 @@
 const ALGORITHMS = ["RDFS", "KRUSKAL", "PRIM"];
 const DEFAULT_ALGORITHM = ALGORITHMS[1];
 
+//Resolution Settings
 var CELL_SIZE = 40;
 var windowWidth;
 var windowHeight;
 
+//Color Settings
 var bg_color = [13, 17, 23];
 var line_color = [0, 240, 60];//[200, 0, 200];
 
+//Speed Settings
+var steps_per_frame = 50;
+var frame_rate = 10;
+
+var canvas;
 var grid = [];
 var maze_gen;
 var starting_cell;
-var steps_per_frame = 50;
-var frame_rate = 10;
 var selected_algorithm = DEFAULT_ALGORITHM;
+var is_paused = false;
+
 
 const getAlgorithm = function(name){
   name = name == undefined ? DEFAULT_ALGORITHM : name;
@@ -27,6 +34,7 @@ const getAlgorithm = function(name){
 
   return algorithms[name];
 }
+
 
 const initializeGrid = function(grid, rowN, colN){
   while(grid.length > 0){
@@ -46,12 +54,14 @@ const initializeGrid = function(grid, rowN, colN){
     for(let j=0; j<colN; j++){
       row.push(new Cell(i, j));
     }
+
     grid.push(row);
   }
 
   //Initialize adjacent Cell attribute in all the walls
   initializeWalls(grid);
 }
+
 
 const initializeWalls = function(grid){
   grid.forEach((row, i) => {
@@ -80,19 +90,19 @@ const initializeWalls = function(grid){
   });
 }
 
-const reset = function(){
-  //Recalculate resolution values
-  CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
 
-  //Reset control
+const resetCanvas = function(){
+  //Recalculate resolution values
+  //CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
+
+  //resetCanvas control
   starting_cell = undefined;
   maze_gen = undefined;
 
-  //Reset Grid
+  //resetCanvas Grid
   initializeGrid(grid);
 }
 
-var canvas;
 
 const mod = function(n, m) {
   return ((n % m) + m) % m;
@@ -112,13 +122,19 @@ const calculateIdealCellSize = function(w, h){
 
 function setup(){
   background(bg_color);
-
-  CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
+  frameRate(frame_rate);
+  noLoop();
 
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.mouseClicked(checkMouseClick);
+  canvas.mouseOver(loop);
+  canvas.mouseOut(() => {
+    if(maze_gen == undefined){
+      noLoop();
+    }
+  });
 
-  frameRate(frame_rate);
+  CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
 
   initializeGrid(grid, floor(windowHeight/CELL_SIZE), floor(windowWidth/CELL_SIZE));
 }
@@ -135,7 +151,7 @@ function draw() {
 
   if(maze_gen !== undefined && starting_cell !== undefined){
     if(!maze_gen.is_done){
-      for (var i = 0; i<steps_per_frame; i++) {
+      for (var i = 0; i<steps_per_frame && !is_paused; i++) {
         maze_gen.step();
       }
     }
@@ -168,15 +184,12 @@ function Cell(i, j){
     this.setShadow(true);
 
     if(this.eastWall && this.walls['east'] !== undefined){
-      //line(this.p.x + CELL_SIZE, this.p.y, this.p.x + CELL_SIZE, this.p.y + CELL_SIZE);
       this.walls['east'].show();
     }
 
     if(this.southWall && this.walls['south'] !== undefined){
-      //line(this.p.x, this.p.y + CELL_SIZE, this.p.x + CELL_SIZE, this.p.y + CELL_SIZE);
       this.walls['south'].show();
     }
-
 
     //Walls for the border. Just visuals.
     //No impact on the algorithms.
@@ -191,13 +204,13 @@ function Cell(i, j){
     this.setShadow(false);
   }
 
+  this.getPos = function() {
+    return [CELL_SIZE*this.j, CELL_SIZE*this.i];
+  }
+
   this.isHovering = function() {
     var pos = this.getPos();
     return mouseX > pos[0] && mouseX < pos[0] + CELL_SIZE && mouseY > pos[1] && mouseY < pos[1] + CELL_SIZE;
-  }
-
-  this.getPos = function() {
-    return [CELL_SIZE*this.j, CELL_SIZE*this.i];
   }
 
   this.setShadow = function(b){
@@ -222,6 +235,7 @@ function Point(x, y){
   this.y = y;
 }
 
+
 function Wall(cell1, cell2, p1, p2){
   this.cell1 = cell1;
   this.cell2 = cell2;
@@ -242,12 +256,14 @@ function Wall(cell1, cell2, p1, p2){
   }
 }
 
+
 function checkMouseClick(){
     if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
       process();
       return;
     }
 }
+
 
 function process() {
   if(starting_cell == undefined){
@@ -257,6 +273,7 @@ function process() {
     run(selected_algorithm, i, j);
   }
 }
+
 
 function run(algo_name, i, j){
   i = i == undefined ? 0 : i;
@@ -271,6 +288,7 @@ function run(algo_name, i, j){
   maze_gen = getAlgorithm(selected_algorithm);
 }
 
+
 function getParameters(){
   var input_frame_frate = parseInt(document.getElementById("input_frame_rate").value);
   var input_steps_per_frame = parseInt(document.getElementById("input_steps_per_frame").value);
@@ -283,8 +301,19 @@ function getParameters(){
   }
 }
 
+
 function setParameters(fr, spf, algo){
   frame_rate = fr <= 0 ? 1 : fr;
   steps_per_frame = spf <= 0 ? 1 : spf;
   selected_algorithm = algo == undefined || !ALGORITHMS.includes(algo.toUpperCase()) ? DEFAULT_ALGORITHM : algo.toUpperCase();
+}
+
+
+function setPause(b){
+  is_paused = b;
+}
+
+function setStepsPerFrame(spf){
+  steps_per_frame = spf > 0 ? spf : 1;
+   document.getElementById("input_steps_per_frame").value = steps_per_frame;
 }
