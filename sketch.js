@@ -8,12 +8,12 @@ var windowWidth;
 var windowHeight;
 
 //Color Settings
-var bg_color = [13, 17, 23];
-var line_color = [0, 240, 60];//[200, 0, 200];
+var bg_color = "#0D1117";
+var line_color = "#00F03C"; //[0, 240, 60];
 
 //Speed Settings
-var steps_per_frame = 50;
-var frame_rate = 10;
+var steps_per_frame = 10;
+var frame_rate = 20;
 
 var canvas;
 var grid = [];
@@ -21,6 +21,7 @@ var maze_gen;
 var starting_cell;
 var selected_algorithm = DEFAULT_ALGORITHM;
 var is_paused = false;
+var show_maze = false;
 
 
 const getAlgorithm = function(name){
@@ -175,7 +176,7 @@ function Cell(i, j){
 
   this.show = function() {
 
-    if((starting_cell == undefined) && this.isHovering()){
+    if(((starting_cell == undefined) && this.isHovering()) || (show_maze && this.visited)){
       fill([0, 200, 200]);
       stroke(0);
       rect(this.p.x, this.p.y, CELL_SIZE, CELL_SIZE);
@@ -313,7 +314,13 @@ function setPause(b){
   is_paused = b;
 }
 
+
 function setStepsPerFrame(spf){
   steps_per_frame = spf > 0 ? spf : 1;
    document.getElementById("input_steps_per_frame").value = steps_per_frame;
+}
+
+
+function setShowMaze(b){
+  show_maze = b;
 }

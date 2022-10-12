@@ -134,6 +134,8 @@ class RKruskal extends MazeGenerator{
     if(!this.hasEqualId(wall.cell1, wall.cell2)){
       this.removeWall(wall.cell1, wall.cell2)
       this.overwriteID(this.getID(wall.cell1), this.getID(wall.cell2));
+      wall.cell1.visited = true;
+      wall.cell2.visited = true;
     }
   }
 
@@ -180,11 +182,13 @@ class RPrim extends MazeGenerator{
     this.startingCell = startingCell;
     this.startingCell.visited = true;
     this.walls = this.getWallsOfCell(this.startingCell);
+    this.is_done = false;
     //shuffle(this.walls);
   }
 
   step(){
-    if(this.walls.length == 0){
+    if(this.walls.length == 0 || this.is_done){
+      this.is_done = true;
       return;
     }
 
@@ -199,7 +203,6 @@ class RPrim extends MazeGenerator{
       return;
     }
 
-
     if(int(cell1.visited) + int(cell2.visited) == 1){
       var notInMaze = cell2.visited ? cell1 : cell2;
 
@@ -210,8 +213,6 @@ class RPrim extends MazeGenerator{
 
       this.walls = this.walls.concat(this.getWallsOfCell(notInMaze));  //([notInMaze.walls['east'], notInMaze.walls['south']]);
     }
-
-    //removeFromArray(this.walls, randomWall);
   }
 
   getWallsOfCell(cell){

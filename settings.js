@@ -20,6 +20,11 @@ cellColor.addEventListener('change', (event) => {
   line_color = cellColor.value;
 });
 
+var showMazeVisited = document.getElementById("input_show_maze");
+showMazeVisited.addEventListener('change', (event) => {
+  setShowMaze(showMazeVisited.checked);
+});
+
 
 
 function closeAllPages(){
@@ -54,6 +59,11 @@ function downloadCanvasImage(){
   link.remove();
 }
 
+function initializeValues(){
+  fr.value = frame_rate;
+  spf.value = steps_per_frame;
+  cellColor.value = line_color;
+}
 
 
 function KeyPress(e) {
@@ -94,3 +104,5 @@ function KeyPress(e) {
 }
 
 document.onkeydown = KeyPress;
+
+initializeValues();
