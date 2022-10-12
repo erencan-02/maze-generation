@@ -3,7 +3,7 @@ const ALGORITHMS = ["RDFS", "KRUSKAL", "PRIM"];
 const DEFAULT_ALGORITHM = ALGORITHMS[1];
 
 //Resolution Settings
-var CELL_SIZE = 40;
+var cell_size = 40;
 var windowWidth;
 var windowHeight;
 
@@ -13,7 +13,7 @@ var line_color = "#00F03C"; //[0, 240, 60];
 
 //Speed Settings
 var steps_per_frame = 10;
-var frame_rate = 20;
+var frame_rate = 60;
 
 var canvas;
 var grid = [];
@@ -43,11 +43,11 @@ const initializeGrid = function(grid, rowN, colN){
   }
 
   if(rowN == undefined){
-    rowN = floor(windowHeight/CELL_SIZE);
+    rowN = floor(windowHeight/cell_size);
   }
 
   if(colN == undefined){
-    colN = floor(windowWidth/CELL_SIZE);
+    colN = floor(windowWidth/cell_size);
   }
 
   for(let i=0; i<rowN; i++){
@@ -94,7 +94,7 @@ const initializeWalls = function(grid){
 
 const resetCanvas = function(){
   //Recalculate resolution values
-  //CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
+  //cell_size = calculateIdealCellSize(windowWidth, windowHeight);
 
   //resetCanvas control
   starting_cell = undefined;
@@ -104,6 +104,20 @@ const resetCanvas = function(){
   initializeGrid(grid);
 }
 
+const setShadow = function(b){
+  drawingContext.shadowColor = color(line_color);
+
+  if(b){
+    drawingContext.shadowOffsetX = 1;
+    drawingContext.shadowOffsetY = 1;
+    drawingContext.shadowBlur = 6;
+  }
+  else{
+    drawingContext.shadowOffsetX = 0;
+    drawingContext.shadowOffsetY = 0;
+    drawingContext.shadowBlur = 0;
+  }
+}
 
 const mod = function(n, m) {
   return ((n % m) + m) % m;
@@ -129,15 +143,18 @@ function setup(){
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.mouseClicked(checkMouseClick);
   canvas.mouseOver(loop);
+
+  //For performance reasons
   canvas.mouseOut(() => {
-    if(maze_gen == undefined && !settingsIsOpen){
-      noLoop();
+    if(maze_gen == undefined){
+      //noLoop();
     }
   });
 
-  CELL_SIZE = calculateIdealCellSize(windowWidth, windowHeight);
+  cell_size = calculateIdealCellSize(windowWidth, windowHeight);
+  initializeValues();
 
-  initializeGrid(grid, floor(windowHeight/CELL_SIZE), floor(windowWidth/CELL_SIZE));
+  initializeGrid(grid, floor(windowHeight/cell_size), floor(windowWidth/cell_size));
 }
 
 function draw() {
@@ -163,13 +180,13 @@ function draw() {
 function Cell(i, j){
   this.i = i;
   this.j = j;
-  this.p = new Point(j*CELL_SIZE, i*CELL_SIZE);
+  this.p = new Point(j*cell_size, i*cell_size);
   this.eastWall = true;
   this.southWall = true;
   this.visited = false;
   this.walls = {
-    'east': new Wall(this, undefined, new Point(this.p.x + CELL_SIZE, this.p.y), new Point(this.p.x + CELL_SIZE, this.p.y + CELL_SIZE)),
-    'south': new Wall(this, undefined, new Point(this.p.x, this.p.y + CELL_SIZE), new Point(this.p.x + CELL_SIZE, this.p.y + CELL_SIZE)),
+    'east': new Wall(this, undefined, new Point(this.p.x + cell_size, this.p.y), new Point(this.p.x + cell_size, this.p.y + cell_size)),
+    'south': new Wall(this, undefined, new Point(this.p.x, this.p.y + cell_size), new Point(this.p.x + cell_size, this.p.y + cell_size)),
     'west': new Wall(this, undefined, undefined, undefined),
     'north': new Wall(this, undefined, undefined, undefined)
   };
@@ -179,10 +196,8 @@ function Cell(i, j){
     if(((starting_cell == undefined) && this.isHovering()) || (show_maze && this.visited)){
       fill([0, 200, 200]);
       stroke(0);
-      rect(this.p.x, this.p.y, CELL_SIZE, CELL_SIZE);
+      rect(this.p.x, this.p.y, cell_size, cell_size);
     }
-
-    this.setShadow(true);
 
     if(this.eastWall && this.walls['east'] !== undefined){
       this.walls['east'].show();
@@ -195,38 +210,20 @@ function Cell(i, j){
     //Walls for the border. Just visuals.
     //No impact on the algorithms.
     if(this.i == 0){
-      line(this.p.x, this.p.y, this.p.x + CELL_SIZE, this.p.y);
+      line(this.p.x, this.p.y, this.p.x + cell_size, this.p.y);
     }
 
     if(this.j == 0){
-      line(this.p.x, this.p.y, this.p.x, this.p.y + CELL_SIZE);
+      line(this.p.x, this.p.y, this.p.x, this.p.y + cell_size);
     }
-
-    this.setShadow(false);
   }
 
   this.getPos = function() {
-    return [CELL_SIZE*this.j, CELL_SIZE*this.i];
+    return [cell_size*this.j, cell_size*this.i];
   }
 
   this.isHovering = function() {
-    var pos = this.getPos();
-    return mouseX > pos[0] && mouseX < pos[0] + CELL_SIZE && mouseY > pos[1] && mouseY < pos[1] + CELL_SIZE;
-  }
-
-  this.setShadow = function(b){
-    drawingContext.shadowColor = color(line_color);
-
-    if(b){
-      drawingContext.shadowOffsetX = 1;
-      drawingContext.shadowOffsetY = 1;
-      drawingContext.shadowBlur = 6;
-    }
-    else{
-      drawingContext.shadowOffsetX = 0;
-      drawingContext.shadowOffsetY = 0;
-      drawingContext.shadowBlur = 0;
-    }
+    return mouseX > this.p.x && mouseX < this.p.x + cell_size && mouseY > this.p.y && mouseY < this.p.y + cell_size;
   }
 }
 
@@ -257,7 +254,6 @@ function Wall(cell1, cell2, p1, p2){
   }
 }
 
-
 function checkMouseClick(){
     if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
       process();
@@ -268,8 +264,8 @@ function checkMouseClick(){
 
 function process() {
   if(starting_cell == undefined){
-    var i = int(mouseY/CELL_SIZE);
-    var j = int(mouseX/CELL_SIZE);
+    var i = int(mouseY/cell_size);
+    var j = int(mouseX/cell_size);
 
     run(selected_algorithm, i, j);
   }
@@ -293,7 +289,7 @@ function run(algo_name, i, j){
 function getParameters(){
   var input_frame_frate = parseInt(document.getElementById("input_frame_rate").value);
   var input_steps_per_frame = parseInt(document.getElementById("input_steps_per_frame").value);
-  var input_algorithm = document.getElementById("input_algorithm").value;
+  var input_algorithm = document.getElementById("input_selected_algorithm").value;
 
   return {
     "frame_rate": input_frame_frate,
@@ -323,4 +319,9 @@ function setStepsPerFrame(spf){
 
 function setShowMaze(b){
   show_maze = b;
+}
+
+function setCellSize(n){
+  cell_size = 10 <= n <= 100 ? n : calculateIdealCellSize(windowWidth, windowHeight);
+  resetCanvas();
 }

@@ -25,6 +25,12 @@ showMazeVisited.addEventListener('change', (event) => {
   setShowMaze(showMazeVisited.checked);
 });
 
+var cs = document.getElementById("input_cell_size");
+cs.addEventListener('change', (event) => {
+  //setShowMaze(showMazeVisited.checked);
+  setCellSize(parseInt(cs.value));
+});
+
 
 
 function closeAllPages(){
@@ -63,6 +69,10 @@ function initializeValues(){
   fr.value = frame_rate;
   spf.value = steps_per_frame;
   cellColor.value = line_color;
+  cs.value = cell_size;
+
+  //Set selected Option to default Algorithm
+  document.getElementById("input_selected_algorithm").value = DEFAULT_ALGORITHM;
 }
 
 
@@ -81,6 +91,8 @@ function KeyPress(e) {
   if (evtobj.keyCode == 88 && evtobj.ctrlKey) resetCanvas();
 
   if (evtobj.keyCode == 27) toggleSettings();
+
+  if (evtobj.keyCode == 83) setShowMaze(!show_maze);
 
   if(evtobj.keyCode == 72) toggleHelp();
 
@@ -104,5 +116,3 @@ function KeyPress(e) {
 }
 
 document.onkeydown = KeyPress;
-
-initializeValues();

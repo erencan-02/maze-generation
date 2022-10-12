@@ -43,9 +43,10 @@
 
     <div id="settingsPage" class="page">
       <div class="container">
+
         <div class="item">
           <h2 class="itemHeader">Algorithm</h2>
-          <select name="algorithms" id="input_algorithm">
+          <select name="algorithms" id="input_selected_algorithm" value="">
             <option value="RDFS">Random Depth First Search</option>
             <option value="KRUSKAL">Randomized Kruskal</option>
             <option value="PRIM">Randomized Prim</option>
@@ -73,6 +74,12 @@
           <input type="checkbox" id="input_show_maze" name="horns">
           <label for="horns">show</label>
         </div>
+
+        <div class="item">
+          <h2 class="itemHeader">Cell Size</h2>
+          <input id="input_cell_size" type="number" min="10" max="100" step="1" value="30"/>
+        </div>
+
       </div>
     </div>
 
