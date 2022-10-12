@@ -1,3 +1,4 @@
+
 const CUSTOM_EVENTS = [82, 88, 83, 27, 32, 39, 72, 38, 40];
 
 var settingsIsOpen = false;
@@ -58,14 +59,19 @@ function KeyPress(e) {
 
   if(evtobj.keyCode == 32) setPause(!is_paused);
 
+  if(evtobj.keyCode == 38){
+    setStepsPerFrame(++steps_per_frame);
+  }
+
   if(evtobj.keyCode == 40){
     setStepsPerFrame(--steps_per_frame);
   }
 
-  if(evtobj.keyCode == 38){
-    setStepsPerFrame(++steps_per_frame);
-  };
-
+  if(evtobj.keyCode == 39){
+    if(maze_gen !== undefined && !maze_gen.is_done && is_paused){
+      maze_gen.step();
+    }
+  }
 }
 
 document.onkeydown = KeyPress;

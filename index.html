@@ -41,18 +41,7 @@
     </div>
 
     <div id="settingsPage" class="page">
-      <!--<h1 style="position:relative; left:30px;">Settings</h1>-->
       <div class="container">
-        <div class="item">
-          <h2 class="itemHeader">Frame Rate</h2>
-          <input id="input_frame_rate" type="number" min="1" max="60" step="1" value="30"/>
-        </div>
-
-        <div class="item">
-          <h2 class="itemHeader">Steps Per Frame</h2>
-          <input id="input_steps_per_frame" type="number" min="1" step="1" value="50"/>
-        </div>
-
         <div class="item">
           <h2 class="itemHeader">Algorithm</h2>
           <select name="algorithms" id="input_algorithm">
@@ -60,6 +49,17 @@
             <option value="KRUSKAL">Randomized Kruskal</option>
             <option value="PRIM">Randomized Prim</option>
           </select>
+        </div>
+
+
+        <div class="item">
+          <h2 class="itemHeader">Steps Per Frame</h2>
+          <input id="input_steps_per_frame" type="number" min="1" step="1" value="50"/>
+        </div>
+
+        <div class="item">
+          <h2 class="itemHeader">Frame Rate</h2>
+          <input id="input_frame_rate" type="number" min="1" max="60" step="1" value="30"/>
         </div>
       </div>
 
