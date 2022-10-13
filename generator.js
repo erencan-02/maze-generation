@@ -29,7 +29,7 @@ class MazeGenerator{
     }
   }
 
-  getNeighbourCells(cell, field){
+  getAdjacentCells(cell, field){
     var cells = [];
     var i = cell.i;
     var j = cell.j;
@@ -105,7 +105,7 @@ class RDFS extends MazeGenerator{
   }
 
   getUnvisitedNeighbours(cell){
-    return this.getNeighbourCells(cell, this.grid).filter((c) => !c.visited);
+    return this.getAdjacentCells(cell, this.grid).filter((c) => !c.visited);
   }
 }
 
@@ -208,7 +208,7 @@ class RPrim extends MazeGenerator{
 
       this.removeWall(cell1, cell2);
 
-      this.walls = this.walls.concat(this.getWallsOfCell(notInMaze));  //([notInMaze.walls['east'], notInMaze.walls['south']]);
+      this.walls = this.walls.concat(this.getWallsOfCell(notInMaze)); 
     }
   }
 
@@ -247,3 +247,14 @@ const fold = (reducer, init, xs) => {
     }
     return acc;
 };
+
+const removeFromArray = (array, e) => {
+  return array.filter((x) => x !== e);
+}
+
+
+const prepend = (value, array) => {
+  var newArray = array.slice();
+  newArray.unshift(value);
+  return newArray;
+}

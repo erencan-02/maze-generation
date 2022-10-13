@@ -43,7 +43,7 @@ function toggleSettings(){
 
   settingsIsOpen = !settingsIsOpen;
   var option = settingsIsOpen ? "visible" : "hidden";
-  document.getElementById("settingsPage").style.opacity = int(settingsIsOpen);
+  document.getElementById("settingsPage").style.opacity = Math.max(...[0, int(settingsIsOpen)-0.05]);
   document.getElementById("settingsPage").style.visibility = option;
 }
 

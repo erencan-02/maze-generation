@@ -1,6 +1,6 @@
 
 const ALGORITHMS = ["RDFS", "KRUSKAL", "PRIM"];
-const DEFAULT_ALGORITHM = ALGORITHMS[1];
+const DEFAULT_ALGORITHM = ALGORITHMS[2];
 
 //Resolution Settings
 var cell_size = 40;
@@ -10,14 +10,17 @@ var windowHeight;
 //Color Settings
 var bg_color = "#0D1117";
 var line_color = "#00F03C"; //[0, 240, 60];
+var astar_checked_color = "#FF0066";
+var astar_path_color = "#FFFFFF";
 
 //Speed Settings
-var steps_per_frame = 10;
-var frame_rate = 60;
+var steps_per_frame = 20;
+var frame_rate = 30;
 
 var canvas;
 var grid = [];
 var maze_gen;
+var maze_solver;
 var starting_cell;
 var selected_algorithm = DEFAULT_ALGORITHM;
 var is_paused = false;
@@ -96,6 +99,7 @@ const resetCanvas = function(){
   //resetCanvas control
   starting_cell = undefined;
   maze_gen = undefined;
+  maze_solver = undefined;
 
   //resetCanvas Grid
   initializeGrid(grid);
@@ -150,8 +154,9 @@ function setup(){
 
   cell_size = calculateIdealCellSize(windowWidth, windowHeight);
   initializeValues();
-
   initializeGrid(grid, floor(windowHeight/cell_size), floor(windowWidth/cell_size));
+
+  //maze_solver = new AStar(grid, grid[10][10], grid[grid.length-1][grid[0].length-1]);
 }
 
 function draw() {
@@ -170,13 +175,26 @@ function draw() {
         maze_gen.step();
       }
     }
+    else{
+      if(maze_solver == undefined){
+        maze_solver = new AStar(grid, starting_cell, grid[grid.length-1][grid[0].length-1]);
+      }
+      else{
+        for (var i = 0; i<steps_per_frame && !is_paused; i++) {
+          maze_solver.step();
+        }
+      }
+    }
   }
 }
 
 function Cell(i, j){
+  //Position infos
   this.i = i;
   this.j = j;
   this.p = new Point(j*cell_size, i*cell_size);
+
+  //Walls
   this.eastWall = true;
   this.southWall = true;
   this.visited = false;
@@ -187,13 +205,13 @@ function Cell(i, j){
     'north': new Wall(this, undefined, undefined, undefined)
   };
 
-  this.show = function() {
+  //Maze solving algorithm
+  this.astar_is_checked = false; //if visited by astar
+  this.astar_is_path = false; //final path
+  this.path_box_factor = 0.4;
+  this.path_box_offset = cell_size * (1 - this.path_box_factor)/2;
 
-    if(((starting_cell == undefined) && this.isHovering()) || (show_maze && this.visited)){
-      fill([0, 200, 200]);
-      stroke(0);
-      rect(this.p.x, this.p.y, cell_size, cell_size);
-    }
+  this.show = function() {
 
     if(this.eastWall && this.walls['east'] !== undefined){
       this.walls['east'].show();
@@ -205,12 +223,30 @@ function Cell(i, j){
 
     //Walls for the border. Just visuals.
     //No impact on the algorithms.
+    stroke(line_color);
     if(this.i == 0){
       line(this.p.x, this.p.y, this.p.x + cell_size, this.p.y);
+    //  line(this.p.x, this.p.y, this.p.x + cell_size, this.p.y);
     }
 
     if(this.j == 0){
       line(this.p.x, this.p.y, this.p.x, this.p.y + cell_size);
+      //line(this.p.x, this.p.y, this.p.x, this.p.y + cell_size);
+    }
+
+    stroke(0);
+
+    if(this.astar_is_path){
+      fill(astar_path_color);
+      rect(this.p.x + this.path_box_offset, this.p.y + this.path_box_offset, cell_size*this.path_box_factor, cell_size*this.path_box_factor);
+    }
+    else if(this.astar_is_checked){
+      fill(astar_checked_color);
+      rect(this.p.x + this.path_box_offset, this.p.y + this.path_box_offset, cell_size*this.path_box_factor, cell_size*this.path_box_factor);
+    }
+    else if(((starting_cell == undefined) && this.isHovering()) || (show_maze && this.visited)){
+      fill([0, 200, 200]);
+      rect(this.p.x, this.p.y, cell_size, cell_size);
     }
   }
 
@@ -237,6 +273,7 @@ function Wall(cell1, cell2, p1, p2){
   this.show = function(){
     stroke(line_color);
     line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+    //line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
   }
 
   this.setAdj = function(cell){
@@ -247,6 +284,26 @@ function Wall(cell1, cell2, p1, p2){
     this.cell2 = cell;
   }
 }
+
+// function Path(){
+//   this.container = [];
+//
+//   this.add = function(cell){
+//     this.container.push(cell);
+//   }
+//
+//   this.show = function(){
+//     for(var i=0; i<this.container.length; i++){
+//       //var e = new Edge(this.container[i], this.container[i+1]);
+//       //e.show();
+//       var p = this.container[i].p;
+//
+//       stroke(path_color);
+//       rect(p.x, p.y, p.x + cell_size, p.y + cell_size);
+//     }
+//   }
+// }
+
 
 function checkMouseClick(){
     if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
@@ -312,7 +369,7 @@ function setShowMaze(b){
 function setCellSize(n){
   var minSize = 15;
   var maxSize = 1000;
-  
+
   cell_size = minSize <= n <= maxSize ? n : calculateIdealCellSize(windowWidth, windowHeight);
   resetCanvas();
 }
