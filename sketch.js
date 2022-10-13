@@ -180,7 +180,10 @@ function draw() {
         maze_solver = new AStar(grid, starting_cell, grid[grid.length-1][grid[0].length-1]);
       }
       else{
-        for (var i = 0; i<steps_per_frame && !is_paused; i++) {
+        if(maze_solver.is_done){
+          maze_solver.drawPath();
+        }
+        else{
           maze_solver.step();
         }
       }
