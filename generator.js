@@ -2,7 +2,6 @@
 class MazeGenerator{
 
   step(){
-
   }
 
   removeWall(c1, c2){
@@ -180,7 +179,6 @@ class RPrim extends MazeGenerator{
     this.startingCell.visited = true;
     this.walls = this.getWallsOfCell(this.startingCell);
     this.is_done = false;
-    //shuffle(this.walls);
   }
 
   step(){
@@ -189,9 +187,7 @@ class RPrim extends MazeGenerator{
       return;
     }
 
-    //shuffle(this.walls);
-    var randomWall = this.walls.splice(Math.floor(Math.random()*this.walls.length), 1)[0]; //this.walls.pop(); //random(this.walls);
-
+    var randomWall = this.walls.splice(Math.floor(Math.random()*this.walls.length), 1)[0];
 
     var cell1 = randomWall.cell1;
     var cell2 = randomWall.cell2;
@@ -208,53 +204,11 @@ class RPrim extends MazeGenerator{
 
       this.removeWall(cell1, cell2);
 
-      this.walls = this.walls.concat(this.getWallsOfCell(notInMaze)); 
+      this.walls = this.walls.concat(this.getWallsOfCell(notInMaze));
     }
   }
 
   getWallsOfCell(cell){
     return Object.values(cell.walls).filter((x) => x !== undefined);
   }
-
-  getAllWallsOfCell(cell){
-
-  }
-}
-
-
-//Source: https://javascript.info/task/shuffle
-const shuffle = (array) => {
-  if(array.length <= 1){
-    return;
-  }
-
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-
-    // swap elements array[i] and array[j]
-    // we use "destructuring assignment" syntax to achieve that
-    // you'll find more details about that syntax in later chapters
-    // same can be written as:
-    // let t = array[i]; array[i] = array[j]; array[j] = t
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-const fold = (reducer, init, xs) => {
-    let acc = init;
-    for (const x of xs) {
-        acc = reducer(acc, x);
-    }
-    return acc;
-};
-
-const removeFromArray = (array, e) => {
-  return array.filter((x) => x !== e);
-}
-
-
-const prepend = (value, array) => {
-  var newArray = array.slice();
-  newArray.unshift(value);
-  return newArray;
 }

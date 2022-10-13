@@ -9,7 +9,7 @@ var windowHeight;
 
 //Color Settings
 var bg_color = "#0D1117";
-var line_color = "#00F03C"; //[0, 240, 60];
+var line_color = "#00F03C";
 var astar_checked_color = "#FF0066";
 var astar_path_color = "#FFFFFF";
 
@@ -105,28 +105,13 @@ const resetCanvas = function(){
   initializeGrid(grid);
 }
 
-const setShadow = function(b){
-  drawingContext.shadowColor = color(line_color);
-
-  if(b){
-    drawingContext.shadowOffsetX = 1;
-    drawingContext.shadowOffsetY = 1;
-    drawingContext.shadowBlur = 6;
-  }
-  else{
-    drawingContext.shadowOffsetX = 0;
-    drawingContext.shadowOffsetY = 0;
-    drawingContext.shadowBlur = 0;
-  }
-}
-
 const mod = function(n, m) {
   return ((n % m) + m) % m;
 }
 
 const calculateIdealCellSize = function(w, h){
-  var minSize = 30;//40;
-  var maxSize = 70;//70;
+  var minSize = 30;
+  var maxSize = 70;
   var results = {};
 
   for(var i=minSize; i<maxSize; i++){
@@ -136,39 +121,7 @@ const calculateIdealCellSize = function(w, h){
   return int(Object.keys(results).reduce((key, v) => results[v] > results[key] ? v : key));
 }
 
-function setup(){
-  background(bg_color);
-  frameRate(frame_rate);
-  noLoop();
-
-  canvas = createCanvas(windowWidth, windowHeight);
-  canvas.mouseClicked(checkMouseClick);
-  canvas.mouseOver(loop);
-
-  //For performance reasons
-  canvas.mouseOut(() => {
-    if(maze_gen == undefined){
-      //noLoop();
-    }
-  });
-
-  cell_size = calculateIdealCellSize(windowWidth, windowHeight);
-  initializeValues();
-  initializeGrid(grid, floor(windowHeight/cell_size), floor(windowWidth/cell_size));
-
-  //maze_solver = new AStar(grid, grid[10][10], grid[grid.length-1][grid[0].length-1]);
-}
-
-function draw() {
-  frameRate(frame_rate);
-  background(bg_color);
-
-  grid.forEach((item, i) => {
-    item.forEach((c, j) => {
-      c.show();
-    });
-  });
-
+const handleAlgorithms = function(){
   if(maze_gen !== undefined && starting_cell !== undefined){
     if(!maze_gen.is_done){
       for (var i = 0; i<steps_per_frame && !is_paused; i++) {
@@ -191,7 +144,33 @@ function draw() {
   }
 }
 
+function setup(){
+  background(bg_color);
+  frameRate(frame_rate);
+
+  canvas = createCanvas(windowWidth, windowHeight);
+  canvas.mouseClicked(checkMouseClick);
+
+  cell_size = calculateIdealCellSize(windowWidth, windowHeight);
+  initializeValues();
+  initializeGrid(grid, floor(windowHeight/cell_size), floor(windowWidth/cell_size));
+}
+
+function draw() {
+  frameRate(frame_rate);
+  background(bg_color);
+
+  grid.forEach((item, i) => {
+    item.forEach((c, j) => {
+      c.show();
+    });
+  });
+
+  handleAlgorithms();
+}
+
 function Cell(i, j){
+
   //Position infos
   this.i = i;
   this.j = j;
@@ -209,8 +188,8 @@ function Cell(i, j){
   };
 
   //Maze solving algorithm
-  this.astar_is_checked = false; //if visited by astar
-  this.astar_is_path = false; //final path
+  this.astar_is_checked = false;
+  this.astar_is_path = false;
   this.path_box_factor = 0.4;
   this.path_box_offset = cell_size * (1 - this.path_box_factor)/2;
 
@@ -229,12 +208,10 @@ function Cell(i, j){
     stroke(line_color);
     if(this.i == 0){
       line(this.p.x, this.p.y, this.p.x + cell_size, this.p.y);
-    //  line(this.p.x, this.p.y, this.p.x + cell_size, this.p.y);
     }
 
     if(this.j == 0){
       line(this.p.x, this.p.y, this.p.x, this.p.y + cell_size);
-      //line(this.p.x, this.p.y, this.p.x, this.p.y + cell_size);
     }
 
     stroke(0);
@@ -276,7 +253,6 @@ function Wall(cell1, cell2, p1, p2){
   this.show = function(){
     stroke(line_color);
     line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
-    //line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
   }
 
   this.setAdj = function(cell){
@@ -287,25 +263,6 @@ function Wall(cell1, cell2, p1, p2){
     this.cell2 = cell;
   }
 }
-
-// function Path(){
-//   this.container = [];
-//
-//   this.add = function(cell){
-//     this.container.push(cell);
-//   }
-//
-//   this.show = function(){
-//     for(var i=0; i<this.container.length; i++){
-//       //var e = new Edge(this.container[i], this.container[i+1]);
-//       //e.show();
-//       var p = this.container[i].p;
-//
-//       stroke(path_color);
-//       rect(p.x, p.y, p.x + cell_size, p.y + cell_size);
-//     }
-//   }
-// }
 
 
 function checkMouseClick(){
@@ -330,8 +287,6 @@ function run(algo_name, i, j){
   starting_cell = grid[i][j];
 
   var params = getParameters();
-
-  //Set the parameters
   setParameters(params["frame_rate"], params["steps_per_frame"], params["selected_algorithm"]);
 
   maze_gen = getAlgorithm(selected_algorithm);

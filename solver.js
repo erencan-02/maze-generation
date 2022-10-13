@@ -50,14 +50,14 @@ class MazeSolver{
 
 class AStar extends MazeSolver{
 
-  constructor(grid, startingCell, endCell){
+  constructor(grid, startCell, endCell){
     super();
     this.grid = grid;
-    this.startingCell = startingCell;
+    this.startCell = startCell;
     this.endCell = endCell;
     this.currentCell;
 
-    this.openSet = [this.startingCell];
+    this.openSet = [this.startCell];
     this.gScore = this.initializeGScore();
     this.fScore = this.initializeFScore();
     this.is_done = false;
@@ -123,7 +123,7 @@ class AStar extends MazeSolver{
 
     this.grid.forEach((item, i) => {
       item.forEach((c, j) => {
-        costs.set(c, (i == this.startingCell.i) && (j == this.startingCell.j) ? 0 : Infinity);
+        costs.set(c, (i == this.startCell.i) && (j == this.startCell.j) ? 0 : Infinity);
       });
     });
 
@@ -135,7 +135,7 @@ class AStar extends MazeSolver{
 
     this.grid.forEach((item, i) => {
       item.forEach((c, j) => {
-        costs.set(c, (i == this.startingCell.i) && (j == this.startingCell.j) ? this.h(c) : Infinity);
+        costs.set(c, (i == this.startCell.i) && (j == this.startCell.j) ? this.h(c) : Infinity);
       });
     });
 
@@ -162,6 +162,6 @@ class AStar extends MazeSolver{
   }
 
   g(cell){
-    return Math.abs(cell.p.x - this.startingCell.p.x) + Math.abs(cell.p.y - this.startingCell.p.y)
+    return Math.abs(cell.p.x - this.startCell.p.x) + Math.abs(cell.p.y - this.startCell.p.y)
   }
 }

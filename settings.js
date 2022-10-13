@@ -5,8 +5,6 @@ const NUMS = [...Array(10).keys()].map((n) => n+48); //[48, 49, 50, 51, 52, 53, 
 var settingsIsOpen = false;
 var helpIsOpen = false;
 
-
-//Listeners
 var fr = document.getElementById("input_frame_rate")
 fr.addEventListener('change', (event) => {
   frame_rate = parseInt(fr.value);
