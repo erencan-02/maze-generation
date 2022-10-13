@@ -90,6 +90,7 @@ class AStar extends MazeSolver{
         //Reconstructed path
         this.cameFrom.set(c, this.currentCell);
 
+        //Update values
         this.gScore.set(c, tentative_gScore);
         this.fScore.set(c, tentative_gScore + this.h(c));
 
