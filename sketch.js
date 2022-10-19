@@ -25,7 +25,7 @@ var starting_cell;
 var selected_algorithm = DEFAULT_ALGORITHM;
 var is_paused = false;
 var show_maze = false;
-
+var solve_maze = false;
 
 const getAlgorithm = function(name){
   name = name == undefined ? DEFAULT_ALGORITHM : name;
@@ -129,19 +129,25 @@ const handleAlgorithms = function(){
       }
     }
     else{
-      if(maze_solver == undefined){
+      if(maze_solver == undefined && solve_maze){
         maze_solver = new AStar(grid, starting_cell, grid[grid.length-1][grid[0].length-1]);
       }
-      else{
+      else if(maze_solver != undefined){
         if(maze_solver.is_done){
           maze_solver.drawPath();
         }
         else{
-          maze_solver.step();
+          for (var i = 0; i<steps_per_frame && !is_paused; i++) {
+            maze_solver.step();
+          }
         }
       }
     }
   }
+}
+
+const solveMaze = function(){
+  solve_maze = !solve_maze;
 }
 
 function setup(){

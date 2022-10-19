@@ -82,7 +82,6 @@ function initializeValues(){
   document.getElementById("input_selected_algorithm").value = DEFAULT_ALGORITHM;
 }
 
-
 function KeyPress(e) {
 
 	var evtobj = window.event ? event : e

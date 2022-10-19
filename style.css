@@ -135,3 +135,10 @@ li a:hover {
   position: relative;
   top: 0;
 }
+
+#solve_btn{
+  position: relative;
+  width: 100px;
+  height: 30px;
+  background-color: rgb(129, 255, 66);
+}
